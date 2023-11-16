@@ -1,0 +1,375 @@
+import random
+# card array, could add suits to it if desired. but don't feel is necessary
+card_dict = [["King", 10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+             ["King",10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+             ["King",10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+             ["King",10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10]]
+
+def reset_deck():
+    card_dict = [["King", 10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                 ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+                 ["King", 10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                 ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+                 ["King", 10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                 ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10],
+                 ["King", 10], ["Queen", 10], ["Jack", 10], ["Ace", 11], ["1", 1],
+                 ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10]]
+# ALL BLACKJACK CODE
+def BlackJack():
+    round = 0
+
+    answer = str(input("Welcome to BlackJack! Would you like to play? Yes(Y) or No(N) "))
+    # getting initial balance and bet
+    if (answer.upper() == "Y" and round < 1):
+        round = 1
+        balance = int(input("How much money are you ready to lose? "))
+    if (answer.upper() == "Y"):
+        print("\nDeal:", round, "\nYour current balance = $", balance)
+        bet = int(input("What is your bet? "))
+
+        while (bet > balance):
+            bet = int(input("You can't bet that much, what is your real bet? "))
+        if bet == 0:
+            print("\nJust playing for fun I see...")
+        new_balance = play(balance, bet)
+    elif (answer.upper != "Y"):
+            if(answer.upper != "N"):
+                print("I'll take that as a no...")
+            print("Your loss! See ya!")
+
+
+
+    # play again or nah
+    if (answer.upper() == "Y"):
+        answer2 = str(input("Would you like to play again? Yes(Y) or No(N) "))
+        while (answer2.upper() == "Y"):
+            round = round + 1
+            new_bet = int(input("What is your new bet? "))
+            if new_bet == 0:
+                print("\nJust playing for fun I see...")
+            while (new_bet > new_balance):
+                new_bet = int(input("You can't bet that much, what is your real bet? "))
+
+            print(new_bet)
+
+            print("\nDeal:", round)
+            new_balance = play(new_balance, new_bet)
+            if new_balance!= 0:
+                answer2 = str(input("Would you like to play again? Yes(Y) or No(N) "))
+            if new_balance == 0:
+                answer2 = "N"
+                print("You're out of money!!! Try again another time!")
+        if answer2.upper() != "Y":
+            print("Thanks for playing!")
+            print("Your final balance is $", new_balance)
+
+
+# draws a new card
+def new_card():
+    card1 = random.randint(0, len(card_dict)-1)
+
+    return card1
+
+
+# checks if player has gone over 21 or not
+def bust(total):
+
+    if total > 21:
+        return True
+
+    return False
+
+
+# if dealers original draw is less than 17 they have to draw until they get at least 17
+def dealer_draw(total):
+    card = new_card()
+
+    while(total <= 16):
+        print("\nThe dealer's next card was a", card_dict[card][0])
+        total = total + card_dict[card][1]
+        print("The dealer's new total is:", total)
+        if(total < 16):
+            print("The dealers total is still too low")
+    if(total > 16):
+        return total
+
+
+# checks if player or dealer has blackjack
+def check_win(total):
+
+    if total == 21:
+        return True
+
+    return False
+
+
+# checks if you or the dealer won
+def player_win(deal_tot, play_tot):
+
+    if(deal_tot < play_tot < 21):
+        return True
+    elif(play_tot < deal_tot < 21):
+        return False
+
+
+#allows player to stand or hit
+def stand_or_hit(total):
+    decision = str(input("Would you like to stand or hit? "))
+    if decision != "stand" and decision != "hit":
+        print("I'll take that as a stand...")
+
+    while decision == "hit":
+        card = new_card()
+        print("\nYour next card was a", card_dict[card][0])
+        total = total + card_dict[card][1]
+        print("Your new total is:", total)
+        if check_win(total):
+            return total
+        if bust(total):
+            return total
+        decision = str(input("Would you like to stand or hit? "))
+
+    return total
+
+
+# the actual game
+def play(bal, bet1):
+    # gets dealer and players first two cards
+    card1 = new_card()
+    dealer_card1 = card_dict[card1][1]
+    print("\nThe dealers first card is a(n)", card_dict[card1][0])
+    card2 = new_card()
+    dealer_card2 = card_dict[card2][1]
+    dealer_tot = dealer_card1 + dealer_card2
+
+    card3 = new_card()
+    player_card1 = card_dict[card3][1]
+    card4 = new_card()
+    player_card2 = card_dict[card4][1]
+
+    # shows player their cards
+    print("\nYour first card is a(n)", card_dict[card3][0])
+    print("Your second card is a(n)", card_dict[card4][0])
+    player_tot = player_card1 + player_card2
+    print("Your total is:", player_tot)
+
+    # Checks if you or the dealer have blackjack off of the first deal
+    if check_win(player_tot) and check_win(dealer_tot):
+        print("The dealer checks his card and its a ...", card_dict[card4][0])
+        print("You and the dealer both have BlackJack! All bets returned!!")
+        return bal
+    elif check_win(player_tot):
+        print("You have BlackJack!!")
+        bal = bal + (bet1*1.5)
+        print("Your new balance is $", bal)
+        return bal
+    elif check_win(dealer_tot):
+        bal = bal - bet1
+        return bal
+
+    # allows you to stand or hit to try and get closer to BlackJack
+    if not check_win(player_tot):
+        player_tot = stand_or_hit(player_tot)
+
+    # checks who won (a lot of different contingencies)
+    if(check_win(player_tot)):
+        bal = bal + (bet1 * 1.5)
+        print("\nYou have BlackJack!!")
+        print("Your new balance is $", bal)
+        return bal
+
+    if not bust(player_tot) and not check_win(dealer_tot):
+        while (dealer_tot <= 16):
+            print("\nThe dealer flips his card and... ")
+            print("The dealer's second card is a(n)", card_dict[card2][0])
+            print("The dealers total is:", dealer_tot)
+            print("The dealers total is too low")
+            dealer_tot = dealer_draw(dealer_tot)
+        if bust(dealer_tot):
+            print("\nThe dealer has bust! You win!")
+            bal = bal + (bet1 * 1.5)
+            print("Your new balance is $", bal)
+            return bal
+        elif (player_tot == dealer_tot):
+            print("\nThe dealers total is:", dealer_tot)
+            print("The dealer and you have the same total. \n All bets returned, your balance is still $", bal)
+            return bal
+        elif player_win(dealer_tot, player_tot):
+            bal = bal + (bet1 * 1.5)
+            if((dealer_card1 + dealer_card2) == dealer_tot):
+                print("\nThe dealer flips his card and... ")
+                print("The dealer's second card is a(n)", card_dict[card2][0])
+
+            print("You win!! Your new balance is $", bal)
+            return bal
+        elif not player_win(dealer_tot, player_tot):
+            bal = bal - bet1
+            if ((dealer_card1 + dealer_card2) == dealer_tot):
+                print("\nThe dealer flips his card and... ")
+                print("The dealer's second card is a(n)", card_dict[card2][0])
+            print("You lose, stupid loser!! Your new balance is $", bal)
+            return bal
+    else:
+        bal = bal - bet1
+        print("That's a bust! You lose!")
+        print("\nYour new balance is:", bal)
+
+    return bal
+
+
+#ALL GOFISH CODE
+
+
+def computer_turn(computer_hand, player_hand):
+    ask = computer_hand[random.randint(0, len(computer_hand) - 1)]
+    print("\nThe computer asks for a", ask)
+
+    # check to see if computer has what player asks for or Go fish
+    if player_hand.count(ask) < 1:
+        print("\nGo Fish!")
+        print("The computer must draw!")
+        # draws new card for Go fish
+        num = random.randint(0, len(card_dict) - 1)
+        print("You can't see what the computer draws...")
+        computer_hand.append(card_dict[num][0])
+        card_dict.remove(card_dict[num])
+
+    elif player_hand.count(ask) >= 1:
+        if player_hand.count(ask) > 1:
+            print("\nThe player has", player_hand.count(ask), ask + "'s")
+
+        else:
+            print("\nThe player has a", ask)
+
+    for i in range(player_hand.count(ask)):
+        computer_hand.append(ask)
+        player_hand.remove(ask)
+    # checks to see if the player has matches
+    computer_hand = matches(computer_hand)
+
+    print("\nYour hand:", player_hand)
+
+    return computer_hand
+
+
+def player_turn(computer_hand, player_hand):
+    ask = input("What would you like to ask for? (SPELLING MATTERS) ")
+    for v in range(len(player_hand) - 1):
+        if player_hand.count(ask) < 1:
+            ask = input("You can't ask for that... What would you like to ask for? (SPELLING MATTERS) ")
+
+    # check to see if computer has what player asks for or Go fish
+    if computer_hand.count(ask) < 1:
+        print("Go Fish!")
+        print("You must draw!")
+        # draws new card for Go fish
+        num = random.randint(0, len(card_dict) - 1)
+        print("You drew a", card_dict[num][0])
+        player_hand.append(card_dict[num][0])
+        card_dict.remove(card_dict[num])
+
+    elif computer_hand.count(ask) >= 1:
+        if computer_hand.count(ask) > 1:
+            print("The computer has", computer_hand.count(ask), ask + "'s")
+
+        else:
+            print("The computer has a", ask)
+
+    for i in range(computer_hand.count(ask)):
+        player_hand.append(ask)
+        computer_hand.remove(ask)
+    # checks to see if the player has matches
+    player_hand = matches(player_hand)
+
+    print("Your hand:", player_hand)
+
+    return player_hand
+
+
+def matches(hand):
+    match = False
+
+    for i in range(len(hand)-1):
+        if hand.count(hand[i]) == 4:
+            match = True
+            card = str(hand[i])
+            new_match = [card, card, card, card]
+
+    #removes the set from the hand
+    if match == True:
+        fake_hand = []
+        fake_hand.append(new_match)
+
+        #repeating when it doesn't need to
+        print("\nThis hand has set of 4", card + "'s")
+        #print("\n The player has sets of:", fake_hand )
+        #hand = [value for value in hand if value != card]
+        while hand.count(card) > 0:
+            hand.remove(card)
+
+    return hand
+
+
+def GoFish():
+    computer_hand = []
+    player_hand = []
+    for i in range(7):
+        num = random.randint(0, len(card_dict) - 1 )
+        computer_hand.append(card_dict[num][0])
+        card_dict.remove(card_dict[num])
+
+        num = random.randint(0, len(card_dict) - 1)
+        player_hand.append(card_dict[num][0])
+        card_dict.remove(card_dict[num])
+
+    print("Your hand:", player_hand)
+    player_hand = matches(player_hand)
+    computer_hand = matches(computer_hand)
+
+    while len(player_hand) > 0 and len(card_dict) > 0 and len(computer_hand) > 0:
+        if len(computer_hand) > 0:
+            print("\nYour turn!")
+            player_turn(computer_hand, player_hand)
+
+        if len(player_hand) > 0:
+            print("\nComputers Turn!")
+            computer_turn(computer_hand, player_hand)
+
+    if len(player_hand) == 0:
+        print("\nYou Win!!!")
+
+    elif len(computer_hand) == 0:
+        print("\nThe Computer Wins!!")
+
+    elif len(card_dict) == 0:
+        print("\n Game Over... The deck has run out of Cards")
+    answer2 = str(input("Would you like to play again? "))
+    while answer2 == "Y":
+        reset_deck()
+        GoFish()
+        answer2 = input("Would you like to play again? Yes(Y) or N(N) ")
+    if answer2 != "Y":
+        print("\nThanks for playing!!")
+
+
+def welcome():
+    answer = input("Welcome to the Group 10 Casino!! Would you like to play GoFish(G) or BlackJack?(B) ")
+    if answer == "B":
+        BlackJack()
+    elif answer == "G":
+        GoFish()
+    while answer != "B" and answer != "G":
+        answer = input("I didn't quite understand that, would you like to play GoFish(G) or BlackJack?(B) ")
+        if answer == "B":
+            BlackJack()
+        elif answer == "G":
+            GoFish()
+
+
+
+if __name__ == '__main__':
+    welcome()
